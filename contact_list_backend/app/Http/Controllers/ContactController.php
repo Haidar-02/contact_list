@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Contact;
-use App\Models\Location;
 
 class ContactController extends Controller
 {
@@ -13,22 +12,13 @@ class ContactController extends Controller
         return response()->json($contacts);
     }
 
-    public function show($id)
-    {
-        $contact = Contact::find($id);
-
-        if (!$contact) {
-            return response()->json(['message' => 'Contact not found'], 404);
-        }
-
-        return response()->json($contact);
-    }
-
     public function store(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'phone' => 'string|max:20',
+            'phone' => 'required|string|max:20',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
         ]);
 
         $contact = Contact::create($request->all());
@@ -39,7 +29,9 @@ class ContactController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'phone' => 'string|max:20',
+            'phone' => 'required|string|max:20',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
         ]);
 
         $contact = Contact::find($id);
@@ -49,6 +41,7 @@ class ContactController extends Controller
         }
 
         $contact->update($request->all());
+        dd($contact);
         return response()->json($contact);
     }
 
@@ -62,11 +55,5 @@ class ContactController extends Controller
 
         $contact->delete();
         return response()->json(['message' => 'Contact deleted successfully']);
-    }
-
-    public function getContactLocations()
-    {
-        $contacts = Contact::with('locations')->get();
-        return response()->json($contacts);
     }
 }

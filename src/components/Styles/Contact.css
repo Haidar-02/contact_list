@@ -1,0 +1,68 @@
+.map-container {
+  height: 200px;
+  margin-bottom: 1rem;
+}
+
+.leaflet-marker-icon {
+  margin-left: -12px;
+  margin-top: -41px;
+}
+.contact-container {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  padding: 20px;
+  color: rgb(145, 108, 16);
+  width: 250px;
+  border-radius: 10px;
+  background-color: rgb(255, 255, 255);
+  transition: 0.3s;
+  cursor: default;
+}
+.contact-container:hover {
+  background: rgb(145, 108, 16);
+  color: white;
+}
+Map {
+  width: 100px;
+  height: 70px;
+}
+.btn-container {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+}
+.edit-btn {
+  padding: 10px 15px;
+  font-size: 16px;
+  outline: none;
+  border: none;
+  background: rgb(102, 102, 102);
+  border-radius: 5px;
+  color: rgb(255, 255, 255);
+  font-variant: small-caps;
+  transition: 0.2s;
+  cursor: pointer;
+}
+.edit-btn:hover {
+  background-color: white;
+  color: gray;
+}
+.dlt-btn {
+  padding: 10px 15px;
+  font-size: 16px;
+  outline: none;
+  border: none;
+  background: rgb(255, 0, 0);
+  border-radius: 5px;
+  color: rgb(255, 255, 255);
+  font-variant: small-caps;
+  transition: 0.2s;
+  cursor: pointer;
+}
+.dlt-btn:hover {
+  background-color: white;
+  color: red;
+}

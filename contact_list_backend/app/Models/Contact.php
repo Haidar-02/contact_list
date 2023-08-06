@@ -8,9 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class Contact extends Model
 {
     use HasFactory;
-    protected $fillable = ['name', 'phone'];
-    public function locations()
-    {
-        return $this->belongsToMany(Location::class, 'contacts_locations');
-    }
+    protected $table = 'contacts';
+    protected $fillable = ['name', 'phone', 'latitude', 'longitude'];
 }
