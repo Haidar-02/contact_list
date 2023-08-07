@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
@@ -10,7 +10,7 @@ import {
   useMapEvents,
 } from "react-leaflet";
 import "./Styles/AddContact.css";
-import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 const markerIcon = new L.Icon({
   iconUrl: require("./Styles/marker.png"),
@@ -20,31 +20,40 @@ const markerIcon = new L.Icon({
   tooltipAnchor: [16, -28],
 });
 
-const AddContact = ({ fetchContacts }) => {
-  const navigate = useNavigate();
-  const [newContact, setNewContact] = useState({
-    name: "",
-    phone: "",
-    latitude: 33.8938,
-    longitude: 35.5018,
-  });
+const EditContact = ({ fetchContacts }) => {
+  const [contact, setContact] = useState({});
+  const { id } = useParams();
+  useEffect(() => {
+    const fetchContact = async () => {
+      const { data } = await axios.get(
+        `http://localhost:8000/api/contact/${id}`
+      );
+      setContact(data);
+    };
+    fetchContact();
+  }, []);
 
   const handleInputChange = (event) => {
     let name = event.target.name;
     let value = event.target.value;
-    setNewContact((prevContact) => ({ ...prevContact, [name]: value }));
+    setContact((prevContact) => ({ ...prevContact, [name]: value }));
   };
 
-  const handleAddContact = async () => {
-    if (newContact.name && newContact.phone) {
+  const handleEditContact = async () => {
+    if (contact.name && contact.phone) {
       try {
-        const response = await axios.post(
-          "http://localhost:8000/api/store",
-          newContact
+        const response = await axios.put(
+          `http://localhost:8000/api/update/${contact.id}`,
+          contact
         );
         if (response.status === 200) {
-          setNewContact({ name: "", phone: "", latitude: "", longitude: "" });
-          navigate(`/`);
+          setContact({
+            name: "",
+            phone: "",
+            latitude: "",
+            longitude: "",
+          });
+          await fetchContacts();
         }
       } catch (error) {
         console.error("Error adding new contact:", error);
@@ -56,7 +65,7 @@ const AddContact = ({ fetchContacts }) => {
     useMapEvents({
       click: (event) => {
         const { lat, lng } = event.latlng;
-        setNewContact((prevContact) => ({
+        setContact((prevContact) => ({
           ...prevContact,
           latitude: lat,
           longitude: lng,
@@ -73,7 +82,7 @@ const AddContact = ({ fetchContacts }) => {
         <input
           type="text"
           name="name"
-          value={newContact.name}
+          value={contact.name}
           autoComplete="off"
           placeholder="Name"
           onChange={handleInputChange}
@@ -82,7 +91,7 @@ const AddContact = ({ fetchContacts }) => {
         <input
           type="tel"
           name="phone"
-          value={newContact.phone}
+          value={contact.phone}
           placeholder="Phone"
           autoComplete="off"
           onChange={handleInputChange}
@@ -90,34 +99,32 @@ const AddContact = ({ fetchContacts }) => {
 
         <label htmlFor="location">~ Contact Location</label>
         <MapContainer
-          center={[newContact.latitude, newContact.longitude]}
+          center={[contact.latitude, contact.longitude]}
           zoom={12}
           style={{ height: "200px" }}
         >
           <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
           <MapInput />
-          {newContact.latitude && newContact.longitude && (
+          {contact.latitude && contact.longitude && (
             <Marker
-              position={[newContact.latitude, newContact.longitude]}
+              position={[contact.latitude, contact.longitude]}
               icon={markerIcon}
             >
               <Popup>
-                <strong>Latitude: </strong>
-                {newContact.latitude}
+                {contact.latitude}
                 <br />
-                <strong>Longitude: </strong>
-                {newContact.longitude}
+                {contact.longitude}
               </Popup>
             </Marker>
           )}
         </MapContainer>
 
-        <button className="btn" onClick={handleAddContact}>
-          Add Contact
+        <button className="btn" onClick={handleEditContact}>
+          Save
         </button>
       </div>
     </div>
   );
 };
 
-export default AddContact;
+export default EditContact;

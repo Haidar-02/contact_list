@@ -1,0 +1,42 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 20px;
+}
+.form input {
+  align-items: center;
+  outline: none;
+  border: 1px solid white;
+  padding: 10px;
+  transition: 0.2s;
+  font-family: "poppins", sans-serif;
+}
+.form input:focus {
+  background-color: rgb(170, 128, 23);
+  color: white;
+}
+.form input:focus::placeholder {
+  color: white;
+}
+.form label {
+  font-size: 12px;
+  margin-top: 10px;
+}
+.form button {
+  width: -moz-fit-content;
+  width: fit-content;
+  margin-top: 20px;
+}
+.form button:hover {
+  background-color: rgb(170, 128, 23);
+  color: white;
+}
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}

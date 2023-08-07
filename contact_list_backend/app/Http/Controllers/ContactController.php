@@ -12,6 +12,16 @@ class ContactController extends Controller
         return response()->json($contacts);
     }
 
+    public function getContact($id)
+    {
+        try {
+            $contact = Contact::findOrFail($id);
+            return response()->json(['contact' => $contact], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Contact not found'], 404);
+        }
+    }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -22,7 +32,7 @@ class ContactController extends Controller
         ]);
 
         $contact = Contact::create($request->all());
-        return response()->json($contact, 201);
+        return response()->json($contact, 200);
     }
 
     public function update(Request $request, $id)

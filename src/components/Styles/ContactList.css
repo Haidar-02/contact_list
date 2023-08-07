@@ -38,4 +38,6 @@
   align-items: center;
   justify-content: center;
   gap: 20px;
+  row-gap: 40px;
+  flex-wrap: wrap;
 }

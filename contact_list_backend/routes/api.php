@@ -19,4 +19,5 @@ Route::get('/contacts', [ContactController::class, 'index']);
 Route::post('/store', [ContactController::class, 'store']);
 Route::post('/locations', [ContactController::class, 'getContactLocations']);
 Route::put('/update/{id}', [ContactController::class, 'update']);
+Route::get('/contact/{id}', [ContactController::class, 'getContact']);
 Route::delete('/delete/{id}', [ContactController::class, 'destroy']);

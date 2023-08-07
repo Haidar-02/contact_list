@@ -1,9 +1,10 @@
 import React from "react";
-import { MapContainer, TileLayer, Marker } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "./Styles/Contact.css";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 const markerIcon = new L.Icon({
   iconUrl: require("./Styles/marker.png"),
   iconSize: [40, 40],
@@ -11,10 +12,11 @@ const markerIcon = new L.Icon({
   popupAnchor: [1, -34],
   tooltipAnchor: [16, -28],
 });
-const Contact = ({ contact }) => {
+const Contact = ({ contact, fetchContacts }) => {
+  const navigate = useNavigate();
   const deleteContact = async () => {
     try {
-      const response = await axios.get(
+      const response = await axios.delete(
         `http://127.0.0.1:8000/api/delete/${contact.id}`
       );
       console.log(response.data);
@@ -41,13 +43,29 @@ const Contact = ({ contact }) => {
           <Marker
             position={[contact.latitude, contact.longitude]}
             icon={markerIcon}
-          />
+          >
+            <Popup>
+              <strong>Latitude: </strong>
+              {contact.latitude}
+              <br />
+              <strong>Longitude: </strong>
+              {contact.longitude}
+            </Popup>
+          </Marker>
         </MapContainer>
       </div>
       <div className="btn-container">
-        <button className="edit-btn"> Edit </button>{" "}
+        <button
+          className="edit-btn"
+          onClick={() => {
+            navigate(`/edit/${contact.id}`);
+          }}
+        >
+          {" "}
+          Edit{" "}
+        </button>{" "}
         <button className="dlt-btn" onClick={deleteContact}>
-          Delete{""}
+          Delete
         </button>
       </div>
     </div>
