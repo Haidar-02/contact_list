@@ -10,7 +10,7 @@ import {
   useMapEvents,
 } from "react-leaflet";
 import "./Styles/AddContact.css";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const markerIcon = new L.Icon({
   iconUrl: require("./Styles/marker.png"),
@@ -21,15 +21,19 @@ const markerIcon = new L.Icon({
 });
 
 const EditContact = ({ fetchContacts }) => {
-  const [contact, setContact] = useState({});
+  const [contact, setContact] = useState();
   const { id } = useParams();
+
+  const fetchContact = async () => {
+    try {
+      const data = await axios.get(`http://127.0.0.1:8000/api/contact/${id}`);
+      setContact(data.data.contact);
+      console.log(contact);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   useEffect(() => {
-    const fetchContact = async () => {
-      const { data } = await axios.get(
-        `http://localhost:8000/api/contact/${id}`
-      );
-      setContact(data);
-    };
     fetchContact();
   }, []);
 
@@ -38,6 +42,7 @@ const EditContact = ({ fetchContacts }) => {
     let value = event.target.value;
     setContact((prevContact) => ({ ...prevContact, [name]: value }));
   };
+  const navigate = useNavigate();
 
   const handleEditContact = async () => {
     if (contact.name && contact.phone) {
@@ -54,6 +59,7 @@ const EditContact = ({ fetchContacts }) => {
             longitude: "",
           });
           await fetchContacts();
+          navigate(`/`);
         }
       } catch (error) {
         console.error("Error adding new contact:", error);
@@ -77,52 +83,54 @@ const EditContact = ({ fetchContacts }) => {
 
   return (
     <div className="container">
-      <div className="form">
-        <label htmlFor="name">~ Contact Name</label>
-        <input
-          type="text"
-          name="name"
-          value={contact.name}
-          autoComplete="off"
-          placeholder="Name"
-          onChange={handleInputChange}
-        />
-        <label htmlFor="phone">~ Contact Phone</label>
-        <input
-          type="tel"
-          name="phone"
-          value={contact.phone}
-          placeholder="Phone"
-          autoComplete="off"
-          onChange={handleInputChange}
-        />
+      {contact && (
+        <div className="form">
+          <label htmlFor="name">~ Contact Name</label>
+          <input
+            type="text"
+            name="name"
+            value={contact.name}
+            autoComplete="off"
+            placeholder="Name"
+            onChange={handleInputChange}
+          />
+          <label htmlFor="phone">~ Contact Phone</label>
+          <input
+            type="tel"
+            name="phone"
+            value={contact.phone}
+            placeholder="Phone"
+            autoComplete="off"
+            onChange={handleInputChange}
+          />
 
-        <label htmlFor="location">~ Contact Location</label>
-        <MapContainer
-          center={[contact.latitude, contact.longitude]}
-          zoom={12}
-          style={{ height: "200px" }}
-        >
-          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-          <MapInput />
-          {contact.latitude && contact.longitude && (
-            <Marker
-              position={[contact.latitude, contact.longitude]}
-              icon={markerIcon}
-            >
-              <Popup>
-                {contact.latitude}
-                <br />
-                {contact.longitude}
-              </Popup>
-            </Marker>
-          )}
-        </MapContainer>
+          <label htmlFor="location">~ Contact Location</label>
+          <MapContainer
+            center={[contact.latitude, contact.longitude]}
+            zoom={12}
+            style={{ height: "200px" }}
+          >
+            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+            <MapInput />
+            {contact.latitude && contact.longitude && (
+              <Marker
+                position={[contact.latitude, contact.longitude]}
+                icon={markerIcon}
+              >
+                <Popup>
+                  {contact.latitude}
+                  <br />
+                  {contact.longitude}
+                </Popup>
+              </Marker>
+            )}
+          </MapContainer>
 
-        <button className="btn" onClick={handleEditContact}>
-          Save
-        </button>
-      </div>
+          <button className="btn" onClick={handleEditContact}>
+            Save
+          </button>
+        </div>
+      )}
     </div>
   );
 };
